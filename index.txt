@@ -1,0 +1,3 @@
+<h1>   כיתת צהלה 1 HTML</h1>
+
+<a href="c_english.html">Daniel Game</a><br>
