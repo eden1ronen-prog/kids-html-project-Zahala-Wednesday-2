@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title> האתר של ריי   </title>
+  </head>
+  <body>
+    <h1>שלום! אני ריי</h1>
+    <p> sackboyאני אוהב פופי פליטים ו.</p>
+    <p>הצבעים האהובים עליי זה כחול וצהוב הוא .</p>
+  
+    <img src="100.jpg">
+   <img src="67.jpg">
+   <img src="51.jpg">
+  </body>
+</html>

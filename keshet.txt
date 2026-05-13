@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>האתר של קשת	 </title>
+  </head>
+  <body>
+    <h1>שלום! אני קשת</h1
+    <p> אני אוהבת את המשפחה.</p>
+    <p>אני גם אוהבת את החברים והמורים שלי.</p>
+    <img src="keshet1.jpg">
+    <img src="keshet.jpg">
+  </body>
+</html>

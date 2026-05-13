@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>האתר של ניל</title>
+  </head>
+  <body>
+    <h1>שלום! אני ניל</h1>
+    <p>אני אוהב jjk ומיינקראפט.</p>
+    <p>הצבע האהוב עליי הוא כחול.</p>
+   <img src="17.jpg">
+    <img src="86.jpg">
+  </body>
+</html>

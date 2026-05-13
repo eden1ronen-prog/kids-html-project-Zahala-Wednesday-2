@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>האתר של איתמר</title>
+  </head>
+  <body>
+    <h1>שלום! אני איתמר</h1>
+    <p>אני אוהב כדורגל ומיינקראפט.</p>
+    <p>הצבע האהוב עליי הוא כחול.</p>
+    <img src="m.png">
+    <img src="football.jpg">
+  </body>
+</html>

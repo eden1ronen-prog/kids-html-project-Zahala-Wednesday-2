@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>  האתר של אריאל </title>
+  </head>
+  <body>
+    <h1>אני אריאלללל</h1>
+    <p>משחקי מחשב.</p>
+    <p>אני אוהב לגו.</p>
+    <img src="2.png">
+    <img src="1.jpg">
+  </body>
+</html>
