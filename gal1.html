@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הבית שלי</title>
+    <style>
+        /* עיצוב כללי של דף המשחק */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #111;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            user-select: none;
+        }
+
+        /* שימוש בכותרות לפי הדרישה */
+        h1 {
+            color: #ffcc00;
+            text-shadow: 2px 2px 4px #000;
+            margin-bottom: 5px;
+        }
+
+        h3 {
+            color: #bbb;
+            margin-top: 0;
+        }
+
+        /* מכלים עבור החדרים השונים */
+        .room-container {
+            display: none; /* מוסתר כברירת מחדל */
+            width: 800px;
+            height: 500px;
+            border: 4px solid #333;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        /* החדר שמוגדר כפעיל יוצג על המסך */
+        .room-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* צבעי רקע ייחודיים לכל חדר */
+        #room1 { background-color: #1a1a2e; } 
+        #room2 { background-color: #5c4308; border-color: #ffaa00; } 
+        #room3 { background-color: #8a6f00; border-color: #ffffff; } 
+
+        /* עיצוב החפצים הלחיצים בחדר */
+        .object {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+            font-size: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        .object:hover {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 15px #ffcc00);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* מיקומי החפצים בחדר 1 */
+        #book { top: 80px; right: 100px; }
+        #key { bottom: 80px; right: 150px; }
+        #computer { top: 200px; right: 350px; }
+        #fridge { bottom: 50px; left: 100px; border-color: #ffcc00; }
+        #painting { top: 60px; left: 120px; }
+        #red-button { bottom: 200px; right: 120px; }
+        #do-not-press { top: 20px; left: 350px; font-size: 20px; font-weight: bold; background: #ff3333; color: white; }
+        #door-real { bottom: 120px; left: 330px; }
+        #door-fake { bottom: 120px; left: 450px; }
+
+        /* מיקומי החפצים בחדר 2 */
+        #cracker { top: 200px; right: 150px; }
+        #choco { bottom: 150px; left: 200px; }
+        #grater { top: 200px; left: 350px; border-color: #00ff00; background: rgba(0,255,0,0.2); } 
+
+        /* מיקומי החפצים בחדר 3 */
+        #pizza { top: 100px; right: 200px; }
+        #mouse { bottom: 100px; left: 150px; }
+        #mic { top: 200px; left: 350px; border-color: #ff00ff; background: rgba(255,0,255,0.2); } 
+
+        /* עיצוב חלון ההודעה הקופצת (Modal) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-content {
+            background-color: #222;
+            padding: 30px;
+            border-radius: 20px;
+            border: 5px solid #ffcc00;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+        }
+
+        /* מכלים פנימיים להודעות - כולם מוסתרים ויוצגו רק לפי לחיצה */
+        .modal-subcontent {
+            display: none;
+        }
+
+        /* כפתורי פעולה בתוך החלוניות */
+        .action-btn {
+            background-color: #ffcc00;
+            color: #111;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #ffee55;
+        }
+
+        /* קישור לשיר ביוטיוב */
+        .youtube-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #ff0000;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .youtube-link:hover {
+            background-color: #cc0000;
+        }
+
+        /* סגנונות עיצוב לפי נושא ההודעה */
+        .cheese-style { color: #fffebb; }
+        .hacker-style { color: #00ff00; font-family: monospace; }
+        .alarm-style { color: #ff3333; animation: blink 0.5s infinite; }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- כותרות הדף הראשיות -->
+    <h1>🔍 חדר הבריחה המסתורי 🔍</h1>
+    <h3>לחצו על החפצים בחדר כדי למצוא את נתיב הבריחה!</h3>
+
+    <!-- ==================== חדר 1: החדר המקורי ==================== -->
+    <div id="room1" class="room-container active">
+        <div class="object" id="book" onclick="openModal('book')">🍔<br><p style="font-size:12px; margin:0;">המבורגר</p></div>
+        <div class="object" id="key" onclick="openModal('key')">🔑<br><p style="font-size:12px; margin:0;">האמוג'י אומר את זה</p></div>
+        <div class="object" id="computer" onclick="openModal('computer')">💻<br><p style="font-size:12px; margin:0;">המממממ מחשב</p></div>
+        <div class="object" id="fridge" onclick="openModal('fridge')">🚪🧀<br><p style="font-size:12px; margin:0;">\למה יש מקרר</p></div>
+        <div class="object" id="painting" onclick="openModal('painting')">🖼️<br><p style="font-size:12px; margin:0;">אני צירתי את זה</p></div>
+        <div class="object" id="red-button" onclick="openModal('alarm')">🚨<br><p style="font-size:12px; margin:0;">כפתו אדום אם משהוא מעל</p></div>
+        
+        <!-- כפתור לא ללחוץ המבוקש -->
+        <div class="object" id="do-not-press" onclick="openModal('dont-press')">🛑 לא ללחוץ!!!</div>
+        
+        <div class="object" id="door-real" onclick="openModal('door-real')">🚪<br><p style="font-size:12px; margin:0;">דלת ימין</p></div>
+        <div class="object" id="door-fake" onclick="openModal('door-fake')">🚪<br><p style="font-size:12px; margin:0;">דלת שמאל</p></div>
+    </div>
+
+    <!-- ==================== חדר 2: מערת הגבינה ==================== -->
+    <div id="room2" class="room-container">
+        <div class="object" id="cracker" onclick="openModal('cracker')">🍘<br><p style="font-size:12px; margin:0;">קרקר תעים (אתה לא הולך לאכול את זה נכון?)</p></div>
+        <div class="object" id="choco" onclick="openModal('choco')">☕<br><p style="font-size:12px; margin:0;">שוקו קר הוא נראה שנשאר שם הרבא זמן</p></div>
+        <div class="object" id="grater" onclick="openModal('grater')">✨🧀<br><p style="font-size:12px; margin:0;">גבינה עם נצנצים לא תעים</p></div>
+    </div>
+
+    <!-- ==================== חדר 3: טירת הגבינה המלכותית ==================== -->
+    <div id="room3" class="room-container">
+        <div class="object" id="pizza" onclick="openModal('pizza')">🍕<br><p style="font-size:12px; margin:0;">משולש פיצה וחצי</p></div>
+        <div class="object" id="mouse" onclick="openModal('mouse')">🐭<br><p style="font-size:12px; margin:0;" עכבר צעצוע</p></div>
+        <div class="object" id="mic" onclick="openModal('mic')">🎤<br><p style="font-size:12px; margin:0;">מיקרופון עם שירים</p></div>
+    </div>
+
+
+    <!-- ==================== חלונית מודאל קופצת מרכזית ==================== -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            
+            <!-- טקסט קבוע מראש לכל חפץ - שימוש בלעדי ב-H2, H3, P, BR -->
+            
+            <!-- חפץ: המבורגר -->
+            <div id="content-book" class="modal-subcontent">
+                <h2>ההמבורגר היה טעים !</h2>
+                <p>..<br></p>
+                <button class="action-btn" onclick="closeModal()">חזרה לחדר</button>
+            </div>
+
+            <!-- חפץ: מפתח -->
+            <div id="content-key" class="modal-subcontent">
+                <h2>👑 חדר האוצר!</h2>
+                <p>המפתח מסתובב!<br>ולא מפסיק!</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לחדר</button>
+            </div>
+
+            <!-- חפץ: מחשב -->
+            <div id="content-computer" class="modal-subcontent hacker-style">
+                <h2>💻 הודעת האקר!</h2>
+                <p>ALERT: נכנסתם למערכת נסתרת!<br>ההאקר השאיר רמז: "אל תסמכו על הדלת השמאלית בחדר!"</p>
+                <button class="action-btn" onclick="closeModal()">סגור מערכת</button>
+            </div>
+
+            <!-- חפץ: מקרר (מעבר לחדר 2) -->
+            <div id="content-fridge" class="modal-subcontent cheese-style">
+                <h2>🧀 פורטל הגבינה נפתח!</h2>
+                <p>נשאבתם לתוך מערבולת של גבינה מותכת!<br>זה מסוכן...</p>
+                <button class="action-btn" onclick="switchRoom('room2'); closeModal();">קפצו ממנה!</button>
+            </div>
+
+            <!-- חפץ: ציור קיר -->
+            <div id="content-painting" class="modal-subcontent">
+                <h2>🖼️ </h2>
+                <p>זכית בפרס גינס על הציור הקטן ביותר בעולם</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לחדר</button>
+            </div>
+
+            <!-- חפץ: אזעקה -->
+            <div id="content-alarm" class="modal-subcontent alarm-style">
+                <h2>🚨 אזעקה הופעלה! 🚨</h2>
+                <p>אוי לא! לחצתם על הכפתור האדום והאסור!<br>כל החדר מהבהב באדום ועושה רעש של ווו-ווו-ווו!</p>
+                <button class="action-btn" onclick="closeModal()">כבו את האזעקה!</button>
+            </div>
+
+            <!-- חפץ: כפתור אל תלחץ (ההודעה המבוקשת) -->
+            <div id="content-dont-press" class="modal-subcontent">
+                <h2>😮 אופססס...</h2>
+                <p>מה לא ברור? אמרו לא ללחוץ!</p>
+                <button class="action-btn" onclick="closeModal()">מצטער, לא אלחץ שוב</button>
+            </div>
+
+            <!-- חפץ: דלת ימין (אמיתית) -->
+            <div id="content-door-real" class="modal-subcontent">
+                <h2>🚪 הדלת נפתחה!</h2>
+                <p>אך הדרך חסומה .<br>חייבים למצוא דרך אחרת (אולי דרך המקרר?).</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לחפש רמזים</button>
+            </div>
+
+            <!-- חפץ: דלת שמאל (מזויפת) -->
+            <div id="content-door-fake" class="modal-subcontent">
+                <h2>🚪 אאוץ'! דלת מזויפת!</h2>
+                <p>שלא מובילה לכלום.<br>והכל בצבע חום</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לחדר</button>
+            </div>
+
+            <!-- ==================== הודעות חדר 2 ==================== -->
+            
+            <!-- חפץ: קרקר -->
+            <div id="content-cracker" class="modal-subcontent cheese-style">
+                <h2> קרקר יבש</h2>
+                <p>זה קרקר פג תוקף... יכלת להשקיע יותר.</p>
+                <button class="action-btn" onclick="closeModal()">חזרה למערה</button>
+            </div>
+
+            <!-- חפץ: שוקו -->
+            <div id="content-choco" class="modal-subcontent cheese-style">
+                <h2> שוקו חם</h2>
+                <p>אני בכלל אוהב אייס קפה.</p>
+                <button class="action-btn" onclick="closeModal()">חזרה למערה</button>
+            </div>
+
+            <!-- חפץ: פומפייה (מעבר לחדר 3) -->
+            <div id="content-grater" class="modal-subcontent cheese-style">
+                <h2>✨ פומפיית הקסם!</h2>
+                <p>גרדתם את קיר המערה ונחשפה טירה!</p>
+                <button class="action-btn" onclick="switchRoom('room3'); closeModal();">היכנסו לטירה!</button>
+            </div>
+
+            <!-- ==================== הודעות חדר 3 ==================== -->
+            
+            <!-- חפץ: פיצה -->
+            <div id="content-pizza" class="modal-subcontent cheese-style">
+                <h2>משולש פיצה</h2>
+                <p>הפיצה מבעבעת אי אפשר לגעת בה!</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לטירה</button>
+            </div>
+
+            <!-- חפץ: עכבר -->
+            <div id="content-mouse" class="modal-subcontent cheese-style">
+                <h2> עכבר </h2>
+                <p>המפלצת התאהבה בעכבר ורקדה איתו עד הבוקר!</p>
+                <button class="action-btn" onclick="closeModal()">חזרה לטירה</button>
+            </div>
+
+            <!-- חפץ: מיקרופון (הפתרון הסופי + לינק ליוטיוב) -->
+            <div id="content-mic" class="modal-subcontent cheese-style">
+                <h2>🎤 המופע הגדול!</h2>
+                <p><br>ניצחתם את המשחק! הנה שיר שמח בשבילכם לחגוג את הניצחון:</p>
+                
+                <!-- לינק  לשיר שמח ביוטיוב -->
+                <a href="https://youtu.be/mC824we3Oz4?list=RDmC824we3Oz4" target="_blank" class="youtube-link">🎉 לחצו כאן לשיר  ! 🎉</a>
+
+<a href="https://youtu.be/k_RpMhp2Y-w?list=RDk_RpMhp2Y-w" target="_blank" class="youtube-link">🎉 לחצו כאן לדיבוב של שיר  ! 🎉</a>
+
+
+
+                <br>
+                <button class="action-btn" onclick="switchRoom('room1'); closeModal();">שחקו שוב מהתחלה</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== קוד ה-JavaScript שמנהל את התצוגה בלבד ==================== -->
+    <script>
+        // פונקציה לפתיחת חלון ההודעה הקופצת
+        function openModal(objectType) {
+            // הסתרת כל תוכן קודם שהיה בחלונית
+            document.querySelectorAll('.modal-subcontent').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // הצגת התוכן הספציפי שמתאים לחפץ שנלחץ (לפי ה-ID של ה-div)
+            document.getElementById('content-' + objectType).style.display = 'block';
+
+            // הצגת חלון המודאל הראשי על המסך
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        // פונקציה לסגירת חלון ההודעה הקופצת
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        // פונקציה למעבר בין חדרים (הסתרת החדר הנוכחי והצגת החדר החדש)
+        function switchRoom(roomId) {
+            document.querySelectorAll('.room-container').forEach(room => {
+                room.classList.remove('active');
+            });
+            document.getElementById(roomId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
